@@ -1,0 +1,7 @@
+Flask==2.2.3
+Werkzeug==2.2.2
+Flask-SQLAlchemy==2.5.1        # SQLAlchemy를 사용한 데이터베이스 ORM
+Flask-Migrate==3.1.0           # 데이터베이스 마이그레이션 관리
+Flask-Cors==3.0.10             # Cross-Origin Resource Sharing 지원
+Flask-Login==0.5.0             # 사용자 인증 관리
+requests==2.26.0               # HTTP 요청을 위한 패키지
