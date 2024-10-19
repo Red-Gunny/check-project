@@ -1,0 +1,38 @@
+name: Build and Push to ECR
+
+on:
+  push:
+    branches:
+      - main  # 메인 브랜치에 푸시될 때마다 실행
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build Docker image
+        run: |
+          docker build -t my-flask-app .
+
+      - name: Tag Docker image
+        run: |
+          IMAGE_TAG=latest
+          REPOSITORY_NAME=my-flask-app
+          AWS_REGION=ap-northeast-2 
+          docker tag hong_repo/py 585768163293.dkr.ecr.$AWS_REGION.amazonaws.com/hong_repo/py
+
+      - name: Push to ECR
+        run: |
+          IMAGE_TAG=latest
+          REPOSITORY_NAME=my-flask-app
+          AWS_REGION=us-west-2  
+          docker push 585768163293.dkr.ecr.$AWS_REGION.amazonaws.com/hong_repo/py
