@@ -10,42 +10,50 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # 2. Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
+      # 3. Set up AWS credentials
       - name: Set up AWS credentials
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ap-northeast-2  # 사용할 AWS 리전 설정
         run: |
           echo "Setting up AWS CLI"
           aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-          aws configure set region $AWS_REGION
+          aws configure set region ap-northeast-2
 
+      # 4. Login to Amazon ECR
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
-        with:
-          mask-password: false  # 필요에 따라 설정
 
+      # 5. Build Docker image
       - name: Build Docker image
         run: |
           docker build -t my-flask-app .
 
+      # 6. Tag Docker image
       - name: Tag Docker image
         run: |
           IMAGE_TAG=latest
           REPOSITORY_NAME=my-flask-app
-          AWS_REGION=ap-northeast-2  # 사용할 AWS 리전
-          docker tag $REPOSITORY_NAME:$IMAGE_TAG 123456789012.dkr.ecr.$AWS_REGION.amazonaws.com/$REPOSITORY_NAME:$IMAGE_TAG
+          ACCOUNT_ID=585768163293  # AWS 계정 ID를 입력하세요
+          AWS_REGION=ap-northeast-2  # AWS 리전
 
-      - name: Push to ECR
+          docker tag $REPOSITORY_NAME:$IMAGE_TAG $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPOSITORY_NAME:$IMAGE_TAG
+
+      # 7. Push Docker image to ECR
+      - name: Push Docker image to ECR
         run: |
           IMAGE_TAG=latest
           REPOSITORY_NAME=my-flask-app
-          AWS_REGION=ap-northeast-2  # 사용할 AWS 리전
+          ACCOUNT_ID=585768163293  # AWS 계정 ID를 입력하세요
+          AWS_REGION=ap-northeast-2  # AWS 리전
+
           docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$REPOSITORY_NAME:$IMAGE_TAG
