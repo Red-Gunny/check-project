@@ -16,10 +16,21 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
+      - name: Set up AWS credentials
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ap-northeast-2  # 사용할 AWS 리전 설정
+        run: |
+          echo "Setting up AWS CLI"
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set region $AWS_REGION
+
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
         with:
-          region: ap-northeast-2
+          mask-password: false  # 필요에 따라 설정
 
       - name: Build Docker image
         run: |
@@ -29,12 +40,12 @@ jobs:
         run: |
           IMAGE_TAG=latest
           REPOSITORY_NAME=my-flask-app
-          AWS_REGION=ap-northeast-2 
-          docker tag hong_repo/py 585768163293.dkr.ecr.$AWS_REGION.amazonaws.com/hong_repo/py
+          AWS_REGION=ap-northeast-2  # 사용할 AWS 리전
+          docker tag $REPOSITORY_NAME:$IMAGE_TAG 123456789012.dkr.ecr.$AWS_REGION.amazonaws.com/$REPOSITORY_NAME:$IMAGE_TAG
 
       - name: Push to ECR
         run: |
           IMAGE_TAG=latest
           REPOSITORY_NAME=my-flask-app
-          AWS_REGION=us-west-2  
-          docker push 585768163293.dkr.ecr.$AWS_REGION.amazonaws.com/hong_repo/py
+          AWS_REGION=ap-northeast-2  # 사용할 AWS 리전
+          docker push 123456789012.dkr.ecr.$AWS_REGION.amazonaws.com/$REPOSITORY_NAME:$IMAGE_TAG
