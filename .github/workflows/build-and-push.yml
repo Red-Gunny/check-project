@@ -39,7 +39,7 @@ jobs:
       - name: Tag Docker image
         run: |
           IMAGE_TAG=latest
-          REPOSITORY_NAME=my-flask-app
+          REPOSITORY_NAME=hong/py
           AWS_REGION=ap-northeast-2  # 사용할 AWS 리전
           docker tag $REPOSITORY_NAME:$IMAGE_TAG 123456789012.dkr.ecr.$AWS_REGION.amazonaws.com/$REPOSITORY_NAME:$IMAGE_TAG
 
