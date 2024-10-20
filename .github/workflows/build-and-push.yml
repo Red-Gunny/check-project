@@ -48,4 +48,4 @@ jobs:
           IMAGE_TAG=latest
           REPOSITORY_NAME=my-flask-app
           AWS_REGION=ap-northeast-2  # 사용할 AWS 리전
-          docker push 123456789012.dkr.ecr.$AWS_REGION.amazonaws.com/$REPOSITORY_NAME:$IMAGE_TAG
+          docker push 123456789012.dkr.ecr.$AWS_REGION.amazonaws.com/hong/py
